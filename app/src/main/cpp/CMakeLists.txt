@@ -20,5 +20,7 @@ file(GLOB_RECURSE PLATFORM_SRC CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/pla
 
 add_library(opsu SHARED main.cpp ${PLATFORM_SRC})
 target_compile_definitions(opsu PRIVATE OPSU_VERSION="${OPSU_VERSION}")
+# lets platform/*.cpp write #include "platform/..." (the cpp folder is the include root)
+target_include_directories(opsu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_options(opsu PRIVATE -Wl,-z,max-page-size=16384 -u ANativeActivity_onCreate)
-target_link_libraries(opsu opsu_core app_glue bass bass_fx android log)
+target_link_libraries(opsu opsu_core app_glue bass bass_fx android log EGL GLESv3)

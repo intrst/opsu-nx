@@ -1,0 +1,549 @@
+== file
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== empty dir
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== dir with only a dotfile
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== nested tree
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== trailing slash
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== double slashes
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== nested subdir
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== nonexistent
+IOException: File 'BASE/nope' does not exist.
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== nonexistent nested
+IOException: File 'BASE/tree/nope/x' does not exist.
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== empty string
+IOException: File 'BASE' does not exist.
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== dot slash nonexistent
+IOException: File 'BASE/./nope' does not exist.
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== trailing slash nonexistent
+IOException: File 'BASE/nope' does not exist.
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== duplicate slashes nonexistent
+IOException: File 'BASE/nope/x' does not exist.
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== broken symlink
+IOException: File 'BASE/broken' does not exist.
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== symlink to file
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== symlink to directory
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== dir containing symlinks
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  日本/
+  日本/曲.txt
+== absolute path
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== absolute nonexistent
+IOException: File 'BASE/nope' does not exist.
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== unicode
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+== space
+returned false
+  broken -> nowhere
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  f.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt
+== file named like a dir with slash
+returned false
+  broken -> nowhere
+  dir with space/
+  dir with space/a b.txt
+  empty/
+  ext/
+  ext/deep/
+  ext/deep/outside2.txt
+  ext/outside.txt
+  hiddendir/
+  hiddendir/.hidden
+  linkdir -> ext
+  linkfile -> f.txt
+  tree/
+  tree/one.txt
+  tree/sub/
+  tree/sub/deeper/
+  tree/sub/deeper/three.mp3
+  tree/sub/two.osu
+  withlink/
+  withlink/extlink -> ../ext
+  withlink/filelink -> ../f.txt
+  withlink/plain.txt
+  日本/
+  日本/曲.txt

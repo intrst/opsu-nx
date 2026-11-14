@@ -1,0 +1,44 @@
+plugins { id 'com.android.application' }
+
+// osu!lazer-style version: YYYY.MMDD.patch  (bump patch with -Ppatch=1)
+def now     = new Date()
+def utc     = TimeZone.getTimeZone('UTC')
+def patch   = project.findProperty('patch') ?: '0'
+def verName = now.format('yyyy.MMdd', utc) + '.' + patch
+def verCode = now.format('yyMMddHH', utc).toInteger()
+
+base { archivesName = "opsu-nx-${verName}" }   // -> opsu-nx-2026.1112.0-debug.apk
+
+android {
+    namespace 'fluddokt.opsu.android'
+    compileSdk 35
+        def ndkRoot = System.getenv('ANDROID_NDK_ROOT')
+    if (ndkRoot) {
+        ndkPath ndkRoot
+        ndkVersion new File(ndkRoot).name   // folder name = version, e.g. 29.0.14206865
+    }
+
+    defaultConfig {
+        applicationId 'fluddokt.opsu.android'
+        minSdk 29
+        targetSdk 35
+        versionCode verCode
+        versionName verName
+        ndk { abiFilters 'arm64-v8a', 'armeabi-v7a' }
+        externalNativeBuild {
+            cmake { arguments '-DANDROID_STL=c++_static', "-DOPSU_VERSION=${verName}" }
+        }
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'            // installs next to release builds
+            resValue 'string', 'app_name', 'opsu!nx'  // e.g. 'opsu!nx (debug)' to tell them apart
+        }
+        release {
+            resValue 'string', 'app_name', 'opsu!nx'
+        }
+    }
+    externalNativeBuild {
+        cmake { path 'src/main/cpp/CMakeLists.txt' }
+    }
+}

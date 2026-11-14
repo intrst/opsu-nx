@@ -1,0 +1,23 @@
+# name|path   ("<empty>" = the empty string, "<abs>" = the working directory)
+file|f.txt
+empty dir|empty
+dir with only a dotfile|hiddendir
+nested tree|tree
+trailing slash|tree/
+double slashes|tree//sub
+nested subdir|tree/sub/deeper
+nonexistent|nope
+nonexistent nested|tree/nope/x
+empty string|<empty>
+dot slash nonexistent|./nope
+trailing slash nonexistent|nope/
+duplicate slashes nonexistent|nope//x//
+broken symlink|broken
+symlink to file|linkfile
+symlink to directory|linkdir
+dir containing symlinks|withlink
+absolute path|<abs>/tree
+absolute nonexistent|<abs>/nope
+unicode|日本
+space|dir with space
+file named like a dir with slash|f.txt/

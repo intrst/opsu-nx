@@ -9,7 +9,7 @@ namespace opsu {
 const TimingPoint TimingPoint::DEFAULT("0,1000.0,4,1,0,100,0,0");
 
 TimingPoint::TimingPoint(const std::string& line) {
-    // offset,msPerBeat,meter,sampleType,sampleSet,volume,inherited,kiai
+    // offset,msPerBeat,meter,sampleType,sampleSet,volume,inherited,kiaitime
     std::vector<std::string> tokens = java::split(line, ',');
     try {
         time_ = java::toInt(java::parseFloat(tokens.at(0)));  // rare float

@@ -4,6 +4,6 @@
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
 CPP=$(cd "$HERE/../../../.." && pwd)    # app/src/main/cpp
-for f in "$CPP"/platform/render/gles/*.cpp "$CPP"/platform/render/AssetFiles.cpp "$CPP"/platform/render/StbImpl.cpp; do
+for f in "$CPP"/platform/render/gles/*.cpp "$CPP"/platform/render/AssetFiles.cpp "$CPP"/platform/render/StbFontFace.cpp "$CPP"/platform/render/StbImpl.cpp; do
     g++ -std=c++17 -Wall -Wextra -ffp-contract=off -fsyntax-only -I"$HERE/stubs" -I"$CPP/core/include" "$f"
 done

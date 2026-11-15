@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "../StbFontFace.h"
+
 #define LOG_TAG "opsu-gles"
 
 namespace opsu {
@@ -135,9 +137,8 @@ std::shared_ptr<IRenderTarget> GlesDevice::createRenderTarget(int w, int h) {
     return rt;
 }
 
-std::shared_ptr<IFontFace> GlesDevice::loadFontFace(const std::string& name, float) {
-    __android_log_print(ANDROID_LOG_WARN, LOG_TAG, "loadFontFace(%s): fonts arrive with milestone 3", name.c_str());
-    return nullptr;
+std::shared_ptr<IFontFace> GlesDevice::loadFontFace(const std::string& name, float pixelSize) {
+    return render::loadStbFontFace(name, pixelSize);
 }
 
 bool GlesDevice::onContextCreated() {

@@ -1,11 +1,14 @@
 #include "GlesWindow.h"
 
 #include <cmath>
+#include <cstdio>
+#include <string>
 
 #include "../AssetFiles.h"
 #include "GlesDevice.h"
 #include "GlesGl.h"
 #include "opsu/gfx/Colors.h"
+#include "opsu/gfx/Font.h"
 #include "opsu/gfx/Image.h"
 
 #define LOG_TAG "opsu-gles"
@@ -19,9 +22,11 @@ constexpr EGLint kEs3Bit = 0x0040;  // EGL_OPENGL_ES3_BIT (EGL_OPENGL_ES3_BIT_KH
 
 struct GlesWindow::Scene {
     std::unique_ptr<Image> cursor;
+    std::shared_ptr<Font> font, bold, cjk;
     float t = 0.f;
     float fpsTime = 0.f;
     int frames = 0;
+    std::string fpsText = "fps ...";
 };
 
 GlesWindow::GlesWindow() = default;
@@ -214,14 +219,40 @@ void GlesWindow::debugDrawTestScene(AAssetManager* assets, float dt) {
     g.setDrawMode(Graphics::MODE_NORMAL);
     g.setColor(colors::white);
 
-    // fps to logcat once a second (an on-screen counter needs fonts: milestone 3)
+    // 5. text: Exo2 with the DroidSansFallback backup (Latin, accents, CJK, Hangul), bold, multi-line, scaled + pixel-snapped
+    if (!s.font) {
+        s.font = std::make_shared<Font>("Exo2-Regular.ttf", Font::PLAIN, 24.f);
+        s.cjk = std::make_shared<Font>("DroidSansFallback.ttf", Font::PLAIN, 24.f);
+        s.font->addBackupFont(s.cjk);
+        s.bold = std::make_shared<Font>("Exo2-Bold.ttf", Font::PLAIN, 36.f);
+        s.bold->addBackupFont(std::make_shared<Font>("DroidSansFallback.ttf", Font::PLAIN, 36.f));
+    }
+    g.setColor(colors::white);
+    s.bold->drawString(W * 0.5f - static_cast<float>(s.bold->getWidth("Lumina English Academy")) / 2.f, H * 0.04f, "Lumina English Academy");
+    g.setColor(colors::lightblue);
+    s.font->drawString(W * 0.05f, H * 0.50f, "Hello, World! \xC3\xA9\xC3\xB1\xC3\xBC  \xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E  \xED\x95\x9C\xEA\xB8\x80\nsecond line (lineHeight)");
+    g.setPixelSnap(true);
+    g.pushTransform();
+    g.scale(1.5f, 1.5f);
+    g.setColor(colors::orange);
+    s.font->drawString(W * 0.5f / 1.5f, H * 0.50f / 1.5f, "scaled 1.5x, pixel snapped");
+    g.popTransform();
+    g.setPixelSnap(false);
+
+    // fps counter on screen and in logcat once a second
     s.frames++;
     s.fpsTime += dt;
     if (s.fpsTime >= 1.f) {
+        char buf[64];
+        std::snprintf(buf, sizeof(buf), "fps %.0f  calls %d", s.frames / s.fpsTime, drawCallsLastFrame());
+        s.fpsText = buf;
         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "fps=%.1f drawCalls=%d", s.frames / s.fpsTime, drawCallsLastFrame());
         s.fpsTime = 0.f;
         s.frames = 0;
     }
+    g.setColor(colors::green);
+    s.font->drawString(12.f, 8.f, s.fpsText);
+    g.setColor(colors::white);
 }
 
 }  // namespace gles

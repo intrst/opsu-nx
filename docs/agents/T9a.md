@@ -1,6 +1,6 @@
 # T9a: renderer interface + OpenGL ES 3.0 backend
 
-Status: **WIP, milestones 1-2 of 4 done** (M1 interface + pure code; M2 EGL window + GLES sprite batch). Fonts (M3) and render target/test scene polish (M4) follow.
+Status: **WIP, milestones 1-3 of 4 done** (M1 interface + pure code; M2 EGL window + GLES sprite batch; M3 stb_truetype fonts + text in the test scene). M4: render-target smoke test in the scene + final notes.
 
 ## Design (please read, it differs a little from the brief)
 `opsu::Graphics`, `Image`, `Font`, `RenderTarget`, `Animation`, `SpriteSheet` are CONCRETE pure classes in `core/` (names and
@@ -47,8 +47,14 @@ space; `RenderTarget::setVirtualSize(w, h)` gives the Java behaviour. Which one 
 - `debugDrawTestScene` (sprites part): cursor.png rotated + scaled 3x + orange tint + pulsing alpha; rotated/translated group (push/pop); clipped bar and sprite (`setClip`); two overlapping additive (`MODE_ADD`) sprites; fps + draw-call count to logcat once a second. Text, the render-target smoke test and the on-screen fps counter come with M3/M4.
 - BUG FOUND AND FIXED in M1 code (core, files re-sent): `Graphics` did not hand vertices collected so far to the backend before `setDrawMode`/`setClip`/`clearClip`, so they would have been drawn with the new state. Found by the new mock-GL test; regression test added to `test_gfx_t9a.cpp`.
 
+## Done in milestone 3 (fonts)
+- `platform/render/StbFontFace.{h,cpp}`: `IFontFace` over stb_truetype, shared with a later Vulkan backend. EM size in pixels like FreeType `setPixelSizes` (`stbtt_ScaleForMappingEmToPixels`), ascent = ceil, descent = floor (negative), advance of glyph 0 for missing code points, `bitmap_top` = -y0. `loadStbFontFace("Exo2-Regular.ttf", px)`: a name without '/' is looked up as asset `res/<name>`, then as given; file bytes cached per name. `GlesDevice::loadFontFace` calls it.
+- Test scene: bold title (Exo2-Bold 36 + CJK backup), Latin/accents/CJK/Hangul line with line break, scaled 1.5x pixel-snapped text, green fps counter top-left (`fps N  calls M`, updated once a second).
+- Checked on the desktop with the real fonts: line metrics, glyph presence (`日` missing in Exo2, found via the backup), 'A' bitmap, blank space glyph, missing file -> null, `Font` + fallback through the GLES backend on the fake GL (one draw call for a two-line string, one glyph page, page refilled after a lost context), and a PNG dump of the same layout path (baseline, descenders, accents, CJK all in place).
+- Known look differences (accepted): unhinted glyphs, so below 16 px advances/shapes differ slightly from the Java's hinted FreeType; no kerning (as in the Java).
+
 ## Tests (M2)
-- `sh app/src/main/cpp/platform/render/gles/tools/check_syntax.sh`: every platform/render file with `g++ -std=c++17 -Wall -Wextra -fsyntax-only` against minimal stub `<EGL/egl.h>`, `<GLES3/gl3.h>`, `<android/*.h>` (in `tools/stubs/`, never used by the app build). Clean.
+- `sh app/src/main/cpp/platform/render/gles/tools/check_syntax.sh`: every platform/render file (incl. StbFontFace) with `g++ -std=c++17 -Wall -Wextra -fsyntax-only` against minimal stub `<EGL/egl.h>`, `<GLES3/gl3.h>`, `<android/*.h>` (in `tools/stubs/`, never used by the app build). Clean.
 - `sh app/src/main/cpp/platform/render/gles/tools/run_mock_test.sh`: GlesBackend + GlesDevice + the core gfx code against a FAKE GL that records calls (ASan/UBSan). Checks: 1000 sprites = 1 draw call; texture/solid/mode/scissor changes split batches; the four draw modes set the exact glColorMask/glBlendFunc; context loss (names die, restorer refills, old objects delete nothing, silent while lost); FBO bind/unbind/rebuild; viewport per target. Passes.
 - `tools/test_gles_mock.cc` has extension .cc on purpose: CMake globs `platform/*.cpp`. NOT run on a device (no NDK/GPU here).
 
@@ -105,5 +111,9 @@ while (!app->destroyRequested) {
 4. Press Home, return: `context lost`, then `context created (generation N+k): <n> textures restored` and the same picture. Rotate the phone: `surface HxW`, picture re-fits, nothing stretches wrongly.
 5. If it is black: look for `shader compile failed`, `program link failed`, `FBO ... incomplete`, `decode failed: res/cursor.png`. Call `GlesWindow::setDebugChecks(true)` once to log GL errors.
 
+## Device checklist additions (M3)
+6. Top-center white bold "Lumina English Academy"; middle-left light-blue line `Hello, World! éñü  日本語  한글` + `second line (lineHeight)` below it (sharp, aligned on one baseline); right of it orange "scaled 1.5x, pixel snapped" (crisp, not blurry); top-left green `fps 60  calls N`.
+7. Logcat must NOT show `font not found` / `not a usable TrueType font`. If CJK shows boxes, `DroidSansFallback.ttf` is missing from `assets/res`.
+
 ## Still to do
-M3: stb_truetype `IFontFace` (+ Exo2/DroidSansFallback test text, fps on screen). M4: render-target smoke test in the scene, final notes. Until M3 `loadFontFace` returns null (logged), so `Font` draws nothing.
+M4: render-target smoke test in the scene (draw into an offscreen target, show it scaled), final notes with the full done/WIP/tests/integrator/checklist summary.

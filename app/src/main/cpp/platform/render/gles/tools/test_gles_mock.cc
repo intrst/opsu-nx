@@ -7,6 +7,8 @@
 #include <vector>
 
 #include "../GlesDevice.h"
+#include "../../StbFontFace.h"
+#include "opsu/gfx/Font.h"
 #include "opsu/gfx/Colors.h"
 #include "opsu/gfx/Graphics.h"
 #include "opsu/gfx/Image.h"
@@ -156,6 +158,42 @@ int main() {
 
     // beginFrame clears the whole surface and restores the cached viewport
     int c = gl.clears; dev->gl().beginFrame(Color(0, 0, 0, 1), 800, 600); CHECK(gl.clears == c + 1 && gl.vp[2] == 800);
+
+    // fonts: real Exo2 + DroidSansFallback through stb_truetype
+    {
+        const std::string dir = FONT_DIR;
+        auto face = render::loadStbFontFace(dir + "/Exo2-Regular.ttf", 20.f);
+        CHECK(face != nullptr);
+        if (face) {
+            CHECK(face->ascent() > 10 && face->ascent() < 30 && face->descent() < 0 && face->descent() > -15);
+            CHECK(face->hasGlyph('A') && !face->hasGlyph(0x65E5) && face->advance('A') > 5.f && face->advance('i') < face->advance('W'));
+            GlyphBitmap bm;
+            CHECK(face->rasterize('A', bm) && bm.width > 5 && bm.height > 8 && bm.top > 8 && bm.coverage.size() == static_cast<size_t>(bm.width) * bm.height);
+            int mx = 0; for (auto c : bm.coverage) mx = std::max<int>(mx, c);
+            CHECK(mx > 200);
+            GlyphBitmap sp; CHECK(face->rasterize(' ', sp) && sp.width == 0 && sp.coverage.empty());
+        }
+        CHECK(render::loadStbFontFace(dir + "/nope.ttf", 20.f) == nullptr);
+
+        auto main = std::make_shared<Font>(dir + "/Exo2-Regular.ttf", Font::PLAIN, 20.f);
+        auto cjk = std::make_shared<Font>(dir + "/DroidSansFallback.ttf", Font::PLAIN, 20.f);
+        main->addBackupFont(cjk);
+        CHECK(main->getLineHeight() >= 20 && main->getLineHeight() <= 40);
+        CHECK(main->getWidth("Hello") > main->getWidth("Hell") && main->getWidth("") == 0);
+        const int wcjk = main->getWidth("\xE6\x97\xA5");  // U+65E5, only in the fallback
+        CHECK(wcjk >= 18 && wcjk <= 22);
+        int subs = gl.texSub, draws2 = gl.draws;
+        g->setColor(colors::white);
+        main->drawString(10, 10, "Hello \xE6\x97\xA5\xE6\x9C\xAC\nline 2");
+        g->flush();
+        CHECK(gl.draws == draws2 + 1 && gl.texSub > subs && main->pageCount() == 1 && cjk->pageCount() == 0);  // glyphs of the fallback live in the main font's pages
+        auto bold = std::make_shared<Font>(dir + "/Exo2-Bold.ttf", Font::BOLD, 20.f);
+        CHECK(bold->getWidth("Hello") > 0);
+        // context loss: the glyph page is refilled from its CPU copy
+        dev->onContextLost(); gl.live.clear(); CHECK(dev->onContextCreated());
+        int ti = gl.texImage; draws2 = gl.draws; main->drawString(10, 10, "Hello"); g->flush();
+        CHECK(gl.draws == draws2 + 1 && gl.texImage >= ti);
+    }
 
     rt.reset(); tex.reset(); tex2.reset();
     if (failures) { std::printf("%d failure(s)\n", failures); return 1; }

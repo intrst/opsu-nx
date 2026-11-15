@@ -42,10 +42,23 @@ struct LogTarget : opsu::InputTarget {
 opsu::gles::GlesWindow g_window;
 opsu::AndroidInput* g_input = nullptr;
 bool g_loggedGameImage = false;
+int g_giW = 0, g_giH = 0;
 
 void updateInputSize(android_app* app) {
     if (g_input && app->window)
         g_input->setSurfaceSize(ANativeWindow_getWidth(app->window), ANativeWindow_getHeight(app->window));
+}
+
+// GameImage needs the real screen size: a brand-new window can report a 1x1 surface for a moment, and images loaded at that size
+// would stay 1x1. So only (re)initialise for a sane size, and drop the cached images so they are reloaded at the new scale.
+void refreshGameImage() {
+    const int w = g_window.width(), h = g_window.height();
+    if (w < 64 || h < 64 || (w == g_giW && h == g_giH)) return;
+    g_giW = w;
+    g_giH = h;
+    opsu::gameimage::init(w, h);
+    opsu::gameimage::clearReferences();
+    g_loggedGameImage = false;  // log the image size again
 }
 
 // Options (T10): init -> seams -> parse. Storage: until the "All files access" permission is requested by a Java activity
@@ -98,14 +111,14 @@ void onAppCmd(android_app* app, int32_t cmd) {
             if (app->window) {
                 g_window.init(app->window);
                 updateInputSize(app);
-                opsu::gameimage::init(g_window.width(), g_window.height());  // before the first getImage()
+                refreshGameImage();  // before the first getImage()
             }
             break;
         case APP_CMD_WINDOW_RESIZED:
         case APP_CMD_CONFIG_CHANGED:
             g_window.onResize();
             updateInputSize(app);
-            opsu::gameimage::init(g_window.width(), g_window.height());
+            refreshGameImage();
             break;
         case APP_CMD_TERM_WINDOW:
             if (g_input) g_input->cancelAll();  // no stuck fingers
@@ -160,6 +173,7 @@ void android_main(android_app* app) {
         opsu::Options::flushIfDue();
 
         if (g_window.hasSurface() && g_window.beginFrame()) {
+            refreshGameImage();  // cheap: does nothing unless the surface size changed
             auto now = std::chrono::steady_clock::now();
             float dt = std::chrono::duration<float>(now - last).count();
             last = now;

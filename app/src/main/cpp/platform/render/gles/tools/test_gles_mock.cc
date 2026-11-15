@@ -156,6 +156,18 @@ int main() {
     dev->onContextLost(); gl.live.clear(); CHECK(dev->onContextCreated());  // FBO rebuilt
     rt->bind(); CHECK(gl.fbo != 0); rt->unbind();
 
+    // the scene's smoke-test sequence: bind, clear (own target), draw, unbind, draw the target's texture on the screen
+    {
+        auto t = RenderTarget::create(256, 128);
+        int c0 = gl.clears, d0 = gl.draws;
+        t->bind();
+        g->clear(); CHECK(gl.clears == c0 + 1 && gl.fbo != 0);
+        g->fillRect(0, 0, 10, 10);
+        t->unbind(); CHECK(gl.fbo == 0 && gl.draws == d0 + 1);  // the offscreen rect was submitted to the FBO before unbinding
+        t->draw(0, 0, 256, 128); g->drawTexture(t->getRegion(), 0, 0, 100, 50, 12.f); g->flush();
+        CHECK(gl.draws == d0 + 2 && t->getTexture()->rowZeroIsBottom());
+    }
+
     // beginFrame clears the whole surface and restores the cached viewport
     int c = gl.clears; dev->gl().beginFrame(Color(0, 0, 0, 1), 800, 600); CHECK(gl.clears == c + 1 && gl.vp[2] == 800);
 

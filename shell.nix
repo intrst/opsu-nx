@@ -14,7 +14,7 @@ let
   sdkRoot = "${androidComposition.androidsdk}/libexec/android-sdk";
 in
 pkgs.mkShell {
-  packages = [ pkgs.jdk17 pkgs.cmake pkgs.ninja ];
+  packages = [ pkgs.jdk17 pkgs.cmake pkgs.ninja pkgs.android-tools ];
 
   JAVA_HOME = "${pkgs.jdk17}/lib/openjdk";
   ANDROID_HOME = sdkRoot;

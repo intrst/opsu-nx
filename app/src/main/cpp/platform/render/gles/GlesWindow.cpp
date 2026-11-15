@@ -10,6 +10,7 @@
 #include "opsu/gfx/Colors.h"
 #include "opsu/gfx/Font.h"
 #include "opsu/gfx/Image.h"
+#include "opsu/gfx/RenderTarget.h"
 
 #define LOG_TAG "opsu-gles"
 
@@ -23,6 +24,7 @@ constexpr EGLint kEs3Bit = 0x0040;  // EGL_OPENGL_ES3_BIT (EGL_OPENGL_ES3_BIT_KH
 struct GlesWindow::Scene {
     std::unique_ptr<Image> cursor;
     std::shared_ptr<Font> font, bold, cjk;
+    std::shared_ptr<RenderTarget> rt;
     float t = 0.f;
     float fpsTime = 0.f;
     int frames = 0;
@@ -228,7 +230,7 @@ void GlesWindow::debugDrawTestScene(AAssetManager* assets, float dt) {
         s.bold->addBackupFont(std::make_shared<Font>("DroidSansFallback.ttf", Font::PLAIN, 36.f));
     }
     g.setColor(colors::white);
-    s.bold->drawString(W * 0.5f - static_cast<float>(s.bold->getWidth("Lumina English Academy")) / 2.f, H * 0.04f, "Lumina English Academy");
+    s.bold->drawString(W * 0.5f - static_cast<float>(s.bold->getWidth("opsu!nx")) / 2.f, H * 0.04f, "opsu!nx");
     g.setColor(colors::lightblue);
     s.font->drawString(W * 0.05f, H * 0.50f, "Hello, World! \xC3\xA9\xC3\xB1\xC3\xBC  \xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E  \xED\x95\x9C\xEA\xB8\x80\nsecond line (lineHeight)");
     g.setPixelSnap(true);
@@ -238,6 +240,30 @@ void GlesWindow::debugDrawTestScene(AAssetManager* assets, float dt) {
     s.font->drawString(W * 0.5f / 1.5f, H * 0.50f / 1.5f, "scaled 1.5x, pixel snapped");
     g.popTransform();
     g.setPixelSnap(false);
+
+    // 6. render target smoke test: draw a small scene into a 256x128 RenderTarget (its own pixel space), then draw its texture
+    //    to the screen twice (plain, and rotated + scaled). The text inside must read upright in both.
+    if (!s.rt) s.rt = RenderTarget::create(256, 128);
+    if (s.rt) {
+        const Color savedBg = g.getBackground();
+        s.rt->bind();
+        g.setBackground(Color(0.f, 0.f, 0.f, 0.f));
+        g.clear();
+        g.setBackground(savedBg);
+        g.fillGradientRectV(0.f, 0.f, 256.f, 128.f, Color(0.55f, 0.15f, 0.15f, 1.f), Color(0.15f, 0.15f, 0.55f, 1.f));
+        g.setColor(colors::white);
+        g.drawRect(1.f, 1.f, 254.f, 126.f);
+        g.drawOval(150.f, 40.f, 90.f, 70.f);
+        s.cursor->setRotation(-s.t * 90.f);
+        s.cursor->draw(40.f, 70.f);
+        s.cursor->setRotation(0.f);
+        s.font->drawString(8.f, 6.f, "offscreen target");
+        s.rt->unbind();
+        g.setColor(colors::white);
+        s.rt->draw(W - 276.f, 12.f, 256.f, 128.f);
+        g.drawRect(W - 276.f, 12.f, 256.f, 128.f);
+        g.drawTexture(s.rt->getRegion(), W - 276.f - 230.f, 40.f, 192.f, 96.f, 12.f);
+    }
 
     // fps counter on screen and in logcat once a second
     s.frames++;

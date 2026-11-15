@@ -44,7 +44,6 @@ private:
     std::vector<Frame> frames_;
     int curFrame_ = 0;
     int64_t lastUpdate_ = 0;
-    bool started_ = false;
 };
 
 }  // namespace opsu

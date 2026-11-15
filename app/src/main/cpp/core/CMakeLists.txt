@@ -28,6 +28,8 @@ foreach(t test_audio_t1 test_main test_batch2 test_golden test_golden2 test_gold
     target_link_libraries(opsu_${t} PRIVATE opsu_core)
 endforeach()
 add_test(NAME opsu_options_t10 COMMAND opsu_test_options_t10)
+add_test(NAME opsu_gameimage_t11 COMMAND opsu_test_gameimage_t11)
+add_test(NAME opsu_options_t10 COMMAND opsu_test_options_t10)
 add_test(NAME opsu_audio_t1 COMMAND opsu_test_audio_t1)
 add_test(NAME opsu_tests  COMMAND opsu_test_main)
 add_test(NAME opsu_batch2 COMMAND opsu_test_batch2)

@@ -243,7 +243,6 @@ const char* const kConstantNames[GameOption::COUNT] = {
 };
 
 inline int idx(Id id) { return static_cast<int>(id); }
-inline int idx(const GameOption& o) { return o.ordinal(); }
 
 // Options.Resolution (private enum in the Java): the selectable window sizes, in Java order.
 struct Res { int w, h; };

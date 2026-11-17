@@ -4,14 +4,11 @@
 #include <cstdint>
 #include <string>
 #include "opsu/beatmap/Beatmap.h"
+#include "opsu/db/Sql.h"
 
 namespace opsu {
 
-/** java.sql.SQLException: thrown by a BeatmapDBStore for any database problem. */
-class SQLException : public std::runtime_error {
-public:
-    using std::runtime_error::runtime_error;
-};
+// SQLException now lives in Sql.h (included above); the name opsu::SQLException is unchanged.
 
 /**
  * The part of the SQLite connection that the PORTED slice of BeatmapDB uses (the prepared statements below).
